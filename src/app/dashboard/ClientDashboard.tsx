@@ -1,19 +1,25 @@
 "use client";
 
-import { signIn, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 export default function ClientDashboard({
   session,
 }: {
   session: Session | null;
 }) {
-  if (!session)
-    return (
-      <button type="button" onClick={() => signIn()}>
-        Sign In
-      </button>
-    );
+  useEffect(() => {
+    if (session && typeof window !== "undefined") {
+      const hasWelcomed = sessionStorage.getItem("welcomed");
+      if (!hasWelcomed) {
+        toast.success(`Welcome ${session.user?.name}`);
+        sessionStorage.setItem("welcomed", "true");
+      }
+    }
+  }, [session]);  
+
 
   return (
     <div>
